@@ -24,4 +24,4 @@ This repository is for a yet-to-be-named terminal-based role-playing game that I
 #### Open-World Bird's-eye RPGs
 * [Pokémon Franchise](https://www.pokemon.com/us/)
 
-#### <center>Zeke Baker | 20180326.1814 | README.md</center>
+<h4><center>Zeke Baker | 20180326.1814 | README.md</center></h4>
