@@ -1,0 +1,12 @@
+# file types
+
+*.o
+*.a
+*~
+*.dSYM
+
+# executables
+
+# directories
+
+largeFiles
