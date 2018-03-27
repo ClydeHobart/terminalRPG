@@ -37,7 +37,7 @@ This repository is for a yet-to-be-named terminal-based role-playing game that I
 ### Comparison Table
 
 DnD     | Fallout
--       | -
+---     | ---
 **STR** | **S**
 **DEX** | **A**
 **CON** | **E**
