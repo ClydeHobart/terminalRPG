@@ -36,15 +36,16 @@ This repository is for a yet-to-be-named terminal-based role-playing game that I
 
 ### Comparison Table
 
-DnD 		| Fallout
--				| -
-**STR**	| **S**
-**DEX**	| **A**
-**CON**	| **E**
-**INT**	| **I**
-**WIS**	| **P**
-**CHA**	| **C**
-N/A			| **L**
+DnD     | Fallout
+-       | -
+**STR** | **S**
+**DEX** | **A**
+**CON** | **E**
+**INT** | **I**
+**WIS** | **P**
+**CHA** | **C**
+N/A     | **L**
+
 ## n. Resources
 
 ### Large Files
