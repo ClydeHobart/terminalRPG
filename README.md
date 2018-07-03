@@ -1,23 +1,43 @@
-# terminalRPG
+# Yoreland: Time Untold
 
 ## Introduction
 
 This repository is for a yet-to-be-named terminal-based role-playing game that I'm working on. So far I've been drawing inspiration from other RPGs that I've played ([Dungeons & Dragons](http://dnd.wizards.com/), [The Elder Scrolls V: Skyrim](https://elderscrolls.bethesda.net/en/skyrim?), [Fallout 4](https://fallout.bethesda.net/games/fallout-4), etc.). Not much is currently fleshed out, but that'll obviously change as time goes on.
 
 ## Table of Contents
-1. [Name](#1-name)
-2. [Stats](#2-stats)
-2. [Resources](#n-resources)
+1. [Name](#name)
+1. [Themes](#themes)
+1. [Setting](#setting)
+1. [Stats](#stats)
+1. [Resources](#resources)
 
-## 1. Name
-* "-Terra" suffix
-	* [~~DigiTerra~~](digiterragroup.com)
-* Related to being ancient
-	* archaic
+## Name
+* Yoreland
+	* Yore - of ancient times; homophone of "your" (open-world)
+	* Land - open-world
+* Time - time travel is plot point
+* Untold - end of story unknown; "re-writing" history
 
-## 2. Stats
+## Themes
+* Past vs. Present
 
-### DnD Stats ([Player's Handbook p. 13](https://drive.google.com/open?id=16E2w_vKCj2yp5DwMmjvi1eVVP-Juxukj))
+## Setting
+* Generic Medieval Europe, different regions
+	* Elaborate on this
+* Antagonist group from future (21st century equivalent) invades to take resources
+
+## Stats
+
+### YTU Stat System
+* **MIG**: Might
+* **VIT**: Vitality
+* **LEG**: Legerity
+* **INT**: Intellect
+* **JUD**: Judgement
+* **CHA**: Charm
+* **FAV**: Favor
+
+### DnD Stats ([*Player's Handbook* p. 13](https://drive.google.com/open?id=16E2w_vKCj2yp5DwMmjvi1eVVP-Juxukj))
 * **STR**: Strength
 * **DEX**: Dexterity
 * **CON**: Constitution
@@ -36,17 +56,17 @@ This repository is for a yet-to-be-named terminal-based role-playing game that I
 
 ### Comparison Table
 
-DnD     | Fallout
----     | ---
-**STR** | **S**
-**DEX** | **A**
-**CON** | **E**
-**INT** | **I**
-**WIS** | **P**
-**CHA** | **C**
-N/A     | **L**
+YTU     | DnD     | Fallout
+---     | ---     | ---
+**MIG** | **STR** | **S**
+**VIT** | **CON** | **E**
+**LEG** | **DEX** | **A**
+**INT** | **INT** | **I**
+**JUD** | **WIS** | **P**
+**CHA** | **CHA** | **C**
+**FAV** | N/A     | **L**
 
-## n. Resources
+## Resources
 
 ### Large Files
 * [*Design Patterns of Successful Role-Playing Games*](https://drive.google.com/open?id=1gJc_lOADHFmhlhHMv9PMv5Tr--5MDmGN)

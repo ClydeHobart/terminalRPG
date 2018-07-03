@@ -1,0 +1,40 @@
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+               /\     |  /\                                     /\                                                      
+              /XX\    | /XX\                                   /XX\                                 /\                  
+             /\XXX\   |/\XXX\                                 /\XXX                                /X/                  
+            /  XXXX   /  XXXX                                   XXX                               /XX                   
+               XXXX   |  XXXX                                   XXX                               XXX\                  
+               XXXX   |  XXXX                                   XXX                               \XXX\                 
+               XXXX   | /XXXX      /\     /\    /\       /\     XXX        /\        /\    /\      \XXX\                
+               XXXX   |/ XXXX     /XX\   /XX\  /XX\     /XX\    XXX       /XX\      /XX\  /XX\      \XXX\               
+               XXXX   |  XXXX    /XXXX\  \XXX\//\XX\   /XXXX\   XXX      /XXXX\     \XXX\/XXXX\     /X1XX\              
+               XXXX   | /XXXX   /XX\XXX\  \XXX/  \X/  /XX\XXX\  XXX     /XX\XXX\     \XXX/ \XXX\   /XX\XXX\             
+               XXXX   |/ XXXX   XXX \XXX\  XXX    V   XXX \XX/  XXX     \X/ \XXX\     XXX   XXX    XXX \XXX\            
+               XXXX   |  XXXX   XXX  XXX   XXX        XXX  \/   XXX      V   XXX      XXX   XXX    XXX  XXX             
+               XXXX   |  XXXX   XXX  XXX   XXX        XXX  /    XXX       /\ XXX      XXX   XXX    XXX  XXX             
+               XXXX   |  XXXX   XXX  XXX   XXX        XXX /     XXX      /XX\XXX      XXX   XXX    XXX  XXX             
+               XXXX   | /XXX/   XXX  XXX   XXX        XXX/      XXX     /XX/ XXX      XXX   XXX    XXX  XXX             
+               XXXX   |/XXX/   \XXX\ XXX  \XXX\      \XXX\      XXX    \XXX\ XXX      XXX   XXX   \XXX\ XXX             
+             /XXXXXXXXXXX/      \XXX\XX/   \XXX\      \XXX\    \XXX\    \XXX\XXX\    \XXX\ \XXX\   \XXX\XX/             
+            /X/                  \XXXX/     \XXX\/     \XXX\/   \XXX\/   \XXXXXXX\/   \XXX\ \XXX\/  \XXXX/              
+            XX           /XXX\    \XX/       \XX/       \XX/     \XX/     \XX/\XX/     \XX/  \XX/    \XX/               
+            \XXXXXXXXXXXXX/   \    \/         \/         \/       \/       \/  \/       \/    \/      \/                
+             \XXXXXXXXXXX/                                                                                              
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                           /XXX/ /XXX/ /   / /XXX/       /   / /   / /XXX/  /XX\ /     /XXX\                            
+                             X     X   X\ /X X           X   X X\  X   X   /   X X     X   X                            
+                             X     X   X V X XX/         X   X X \ X   X   X   X X     X   X                            
+                             X     X   X   X X           X   / X  \X   X   X   / X     X   /                            
+                             /   /XXX/ /   / XXXX/       \XX/  /   /   /   \XX/  XXXX/ XXX/                             
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
+                                                                                                                        
