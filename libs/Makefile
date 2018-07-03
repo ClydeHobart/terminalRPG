@@ -22,7 +22,7 @@ $(LIBS): $(OBJS)
 $(FILE).o: $(FILE).h
 
 $(ANIM).o: $(ANIM).h $(FILE).h
-	$(CC) $(CFLAGS) -lncurses $^ $(ANIM).c -c
+	$(CC) $(CFLAGS) -Ilibs -lncurses $(ANIM).c -c
 
 clean:
 	rm -f *.o *.a *~  *.dSYM
