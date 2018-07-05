@@ -8,7 +8,6 @@
 #define _POSIX_C_SOURCE 199309L
 #include <stdio.h>
 #include <stdlib.h>
-// #include <string.h>
 #include <time.h>
 #include <ncurses.h>
 #include "file.h"
@@ -91,5 +90,7 @@ int openingTitle_anim(WINDOW* win)
 	}
 
 	free(title);
+	free(yoreland);
+	free(timeUntold);
 	return 0;
 }

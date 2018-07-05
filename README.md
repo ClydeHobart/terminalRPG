@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository is for a yet-to-be-named terminal-based role-playing game that I'm working on. So far I've been drawing inspiration from other RPGs that I've played ([Dungeons & Dragons](http://dnd.wizards.com/), [The Elder Scrolls V: Skyrim](https://elderscrolls.bethesda.net/en/skyrim?), [Fallout 4](https://fallout.bethesda.net/games/fallout-4), etc.). Not much is currently fleshed out, but that'll obviously change as time goes on.
+This repository is for "Yoreland: Time Untold," a terminal-based role-playing game that I'm working on. So far I've been drawing inspiration from other RPGs that I've played ([Dungeons & Dragons](http://dnd.wizards.com/), [The Elder Scrolls V: Skyrim](https://elderscrolls.bethesda.net/en/skyrim?), [Fallout 4](https://fallout.bethesda.net/games/fallout-4), etc.). Not much is currently fleshed out, but that'll obviously change as time goes on.
 
 ## Table of Contents
 1. [Name](#name)
@@ -26,45 +26,73 @@ This repository is for a yet-to-be-named terminal-based role-playing game that I
 	* Elaborate on this
 * Antagonist group from future (21st century equivalent) invades to take resources
 
-## Stats
+## Attributes
 
-### YTU Stat System
-* **MIG**: Might
-* **VIT**: Vitality
-* **LEG**: Legerity
-* **INT**: Intellect
-* **JUD**: Judgement
-* **CHA**: Charm
-* **FAV**: Favor
+### Attributes Table of Contents
+1. [Yoreland Stat System](#yoreland-stat-system)
+1. [Level](#level)
+1. [Experience](#experience)
+1. [Vitality](#vitality)
+1. [Stamina](#stamina)
+1. [Burden](#burden)
+1. [Class](#class)
+1. [Damage](#damage)
 
-### DnD Stats ([*Player's Handbook* p. 13](https://drive.google.com/open?id=16E2w_vKCj2yp5DwMmjvi1eVVP-Juxukj))
-* **STR**: Strength
-* **DEX**: Dexterity
-* **CON**: Constitution
-* **INT**: Intelligence
-* **WIS**: Wisdom
-* **CHA**: Charisma
+Taking inspiration from RPGs like the Fallout 4 and Dungeons & Dragons, Yoreland incorporates a stat system of 7 base stats, scaled from 1 to 15, each with adverse effects.
 
-### [Fallout Stats (**SPECIAL**)](http://fallout.wikia.com/wiki/Primary_statistic)
-* **S**: Strength
-* **P**: Perception
-* **E**: Endurance
-* **C**: Charisma
-* **I**: Intelligence
-* **A**: Agility
-* **L**: Luck
+### Yoreland Stat System
+* [**MIG**: Might](#mig-might)
+* [**VIG**: Vigor](#vig-vigor)
+* [**LEG**: Legerity](#leg-legerity)
+* [**INT**: Intellect](#int-intellect)
+* [**JUD**: Judgement](#jud-judgement)
+* [**CHA**: Charm](#cha-charm)
+* [**FAV**: Favor](#fav-favor)
 
-### Comparison Table
+#### **MIG**: Might
+Might is a metric of the player's physical strength, affecting both melee attack [damage](#damage) and maximum [burden](#burden). **Specifics TBD**
 
+#### **VIG**: Vigor
+Vigor is a metric of the player's physical health, affecting maximum [vitality](#vitality) and [damage](#damage) [resistances](#resistance). **Specifics TBD**
+
+#### **LEG**: Legerity
+
+#### **INT**: Intellect
+
+#### **JUD**: Judgement
+
+#### **CHA**: Charm
+
+#### **FAV**: Favor
+
+#### Comparison Table
 YTU     | DnD     | Fallout
 ---     | ---     | ---
 **MIG** | **STR** | **S**
-**VIT** | **CON** | **E**
+**VIG** | **CON** | **E**
 **LEG** | **DEX** | **A**
 **INT** | **INT** | **I**
 **JUD** | **WIS** | **P**
 **CHA** | **CHA** | **C**
 **FAV** | N/A     | **L**
+
+### Level
+
+### Experience
+
+### Vitality
+
+### Stamina
+
+### Burden
+
+### Class
+
+### Damage
+
+#### Damage Types
+
+#### Damage Resistances 
 
 ## Resources
 

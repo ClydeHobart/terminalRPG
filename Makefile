@@ -5,8 +5,9 @@
 
 NCT = ncursesTest
 MPT = mapTest
+YL = yoreland
 
-ALL = $(NCT) $(MPT)
+ALL = $(NCT) $(MPT) $(YL)
 
 L = libs
 
@@ -27,6 +28,9 @@ $(NCT): $(NCT).c $(LIBS)
 	$(CC) $(CFLAGS) $^ -o $@ -lncurses
 
 $(MPT): $(MPT).c $(LIBS)
+	$(CC) $(CFLAGS) $^ -o $@ -lncurses
+
+$(YL): $(YL).c $(LIBS)
 	$(CC) $(CFLAGS) $^ -o $@ -lncurses
 
 clean:

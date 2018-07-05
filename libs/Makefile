@@ -7,7 +7,7 @@ FILE = file
 ANIM = animations
 
 FLAGS = 
-CFLAGS = -Wall -pedantic -std=c11 $(FLAGS) # -g
+CFLAGS = -Wall -pedantic -std=c11 $(FLAGS) -g
 CC = gcc
 MAKE = make
 OBJS = $(FILE).o $(ANIM).o
