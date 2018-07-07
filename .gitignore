@@ -10,3 +10,11 @@
 # directories
 
 largeFiles
+
+# WIP files
+
+inventory.c
+
+# extra files
+
+assets/maps/worldMath.txt

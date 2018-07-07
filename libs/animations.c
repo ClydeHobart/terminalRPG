@@ -15,8 +15,6 @@
 /* **************** global functions ****************
  * See animations.h for function descriptions
  */
-
-/**************** openingTitle_anim() ****************/
 int openingTitle_anim(WINDOW* win);
 
 /**************** local functions ****************/
@@ -42,8 +40,7 @@ int openingTitle_anim(WINDOW* win)
 
 	file = fopen("assets/yoreland.txt", "r");
 
-	if (file == NULL)
-	{
+	if (file == NULL) {
 		return 1;
 	}
 
@@ -51,25 +48,20 @@ int openingTitle_anim(WINDOW* win)
 	yoreland = calloc(21, sizeof(char *));
 	timeUntold = calloc(5, sizeof(char *));
 
-	for (int r = 0; r < 40; r++)
-	{
+	for (int r = 0; r < 40; r++) {
 		title[r] = readlinep(file);
 
-		if (r >= Y_ROW && r < Y_ROW + Y_HEIGHT)
-		{
+		if (r >= Y_ROW && r < Y_ROW + Y_HEIGHT) {
 			yoreland[r - Y_ROW] = title[r] + Y_COL;
 		}
 
-		if (r >= T_U_ROW && r < T_U_ROW + T_U_HEIGHT)
-		{
+		if (r >= T_U_ROW && r < T_U_ROW + T_U_HEIGHT) {
 			timeUntold[r - T_U_ROW] = title[r] + T_U_COL;
 		}
 	}
 
-	for (int d = 3; d < 111; d++)
-	{
-		for (int r = (d >= Y_HEIGHT ? Y_HEIGHT - 1 : d); r >= (d >= Y_WIDTH ? d - Y_WIDTH + 1 : 0); r--)
-		{
+	for (int d = 3; d < 111; d++) {
+		for (int r = (d >= Y_HEIGHT ? Y_HEIGHT - 1 : d); r >= (d >= Y_WIDTH ? d - Y_WIDTH + 1 : 0); r--) {
 			mvwaddch(win, r + Y_ROW, d - r + Y_COL, yoreland[r][d - r]);
 		}
 
@@ -77,15 +69,13 @@ int openingTitle_anim(WINDOW* win)
 		nanosleep(&Y_SLEEP, NULL);
 	}
 
-	for (int r = 0; r < T_U_HEIGHT; r++)
-	{
+	for (int r = 0; r < T_U_HEIGHT; r++) {
 		mvwprintw(win, r + T_U_ROW, T_U_COL, "%.*s", T_U_WIDTH, timeUntold[r]);
 		wrefresh(win);
 		nanosleep(&T_U_SLEEP, NULL);
 	}
 
-	for (int r = 0; r < 40; r++)
-	{
+	for (int r = 0; r < 40; r++) {
 		free(title[r]);
 	}
 

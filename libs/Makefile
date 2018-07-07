@@ -5,12 +5,14 @@
 
 FILE = file
 ANIM = animations
+PLAY = player
+WRLD = world
 
 FLAGS = 
 CFLAGS = -Wall -pedantic -std=c11 $(FLAGS) -g
 CC = gcc
 MAKE = make
-OBJS = $(FILE).o $(ANIM).o
+OBJS = $(FILE).o $(ANIM).o $(PLAY).o $(WRLD).o
 LIBS = libs.a
 
 .PHONY: clean
@@ -23,6 +25,11 @@ $(FILE).o: $(FILE).h
 
 $(ANIM).o: $(ANIM).h $(FILE).h
 	$(CC) $(CFLAGS) -Ilibs -lncurses $(ANIM).c -c
+
+$(PLAY).o: $(PLAY).h
+
+$(WRLD).o: $(WRLD).h $(FILE).h $(PLAY).h
+	$(CC) $(CFLAGS) -Ilibs -lncurses $(WRLD).c -c
 
 clean:
 	rm -f *.o *.a *~  *.dSYM
