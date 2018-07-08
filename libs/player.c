@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ncurses.h>
 // #include "inventory.h"
 
 const int STAT_MIG = 0;
@@ -79,4 +80,28 @@ player_getLoc(player_t *player)
 	}
 
 	return loc;
+}
+
+/**************** player_move() ****************/
+void
+player_move(player_t *player, int move)
+{
+	switch (move) {
+		case KEY_UP:
+			player->row--;
+			// if (player->row == -1) player->row = 63;
+			break;
+		case KEY_DOWN:
+			player->row++;
+			// if (player->row == 64) player->row = 0;
+			break;
+		case KEY_LEFT:
+			player->col--;
+			// if (player->col == -1) player->col = 127;
+			break;
+		case KEY_RIGHT:
+			player->col++;
+			// if (player->col == 128) player->col = 0;
+			break;
+	}
 }

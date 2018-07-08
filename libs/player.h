@@ -36,4 +36,12 @@ player_t *player_new();
  */
 int *player_getLoc(player_t *player);
 
+/* **************** player_move() ****************
+ * Moves the player one unit in the specified direction
+ *
+ * player: player_t pointer of player to move
+ * move: int of directional key pressed
+ */
+void player_move(player_t *player, int move);
+
 #endif // __PLAYER_H__

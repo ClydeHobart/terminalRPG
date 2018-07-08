@@ -20,10 +20,12 @@ int main(void)
 	WINDOW *worldWin;	// WINDOW * for the world
 	player_t *player;	// player_t * for the player
 	world_t *world;
+	int *loc;					// DEBUG
 	int currErr;			// int for current exit code error number
 	int height;				// int for height of stdscr
 	int width;				// int for width of stdscr
 	int response;			// int for function responses
+	int key;					// int for key presses
 
 	currErr = 1;
 	initscr();
@@ -51,6 +53,7 @@ int main(void)
 		return currErr;
 	}
 
+	keypad(gameWin, true);
 	currErr++;
 	getch();
 	wclear(gameWin);
@@ -59,10 +62,25 @@ int main(void)
 	wrefresh(gameWin);
 	worldWin = derwin(gameWin, 27, 89, 1, 30);
 	player = player_new();
-	world = world_new(player);
-	world_print(worldWin, world);
-	wrefresh(worldWin);
-	getch();
+	world = world_new(worldWin, player);
+	world_print(world);
+	key = wgetch(gameWin);
+
+	while ( key != 27 ) {
+		if ( key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT ) {
+			world_handleMove(world, key);
+		}
+
+		// BEG DEBUG
+		loc = player_getLoc(player);
+		mvprintw(0, 0, "row: %8d", loc[0]);
+		mvprintw(1, 0, "col: %8d", loc[1]);
+		refresh();
+		// END DEBUG
+
+		key = wgetch(gameWin);
+	}
+
 	endwin();
 	return 0;
 }
