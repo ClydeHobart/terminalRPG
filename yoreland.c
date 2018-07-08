@@ -14,7 +14,7 @@
 #include "libs/player.h"
 #include "libs/world.h"
 
-int main(void)
+int main(const int argc, char *argv[])
 {
 	WINDOW *gameWin;	// WINDOW * for the game
 	WINDOW *worldWin;	// WINDOW * for the world
@@ -46,11 +46,17 @@ int main(void)
 	currErr++;
 	gameWin = newwin(40, 120, height / 2 - 20, width / 2 - 60);
 	refresh();
-	response = openingTitle_anim(gameWin);
 
-	if (response) {
-		endwin();
-		return currErr;
+	if (argc < 2 || strcmp("false", argv[1])) {
+		response = openingTitle_anim(gameWin);
+
+		if (response) {
+			endwin();
+			return currErr;
+		}
+	} else {
+		mvprintw(height / 2, (width / 2 - 11 < 0 ? 0 : width / 2 - 13),
+			"Press any key to continue.");
 	}
 
 	keypad(gameWin, true);
