@@ -28,7 +28,8 @@ static const int CHUNK_NW = 8;
 typedef struct world {
 	WINDOW *worldWin;
 	player_t *player;
-	char **chunks[9];
+	char ***chunks;
+	char ***visited;
 } world_t;
 
 /**************** local functions ****************/
@@ -46,18 +47,67 @@ world_new(WINDOW *worldWin, player_t *player)
 	world_t *world = calloc(1, sizeof(world_t));
 
 	if (world == NULL) {
-		return world;
+		return NULL;
 	}
 
 	world->worldWin = worldWin;
 	world->player = player;
+	world->chunks = calloc(9, sizeof(char **));
+	world->visited = calloc(9, sizeof(char **));
+
+	// if either didn't allocate properly, free as necessary and return NULL
+	if (world->chunks == NULL || world->visited == NULL) {
+		if (world->chunks == NULL) free(world->chunks);
+		if (world->visited == NULL) free(world->visited);
+		free(world);
+		return NULL;
+	}
 
 	for (int c = 0; c < 9; c++) {
 		file = fopen("assets/maps/testMap1.txt", "r");
 		world->chunks[c] = calloc(64, sizeof(char *));
+		world->visited[c] = calloc(64, sizeof(char *));
+
+		// if either didn't allocate properly, free as necessary and return NULL
+		if (world->chunks[c] == NULL || world->visited[c] == NULL) {
+			if (world->chunks[c] == NULL) free(world->chunks[c]);
+			if (world->visited[c] == NULL) free(world->visited[c]);
+
+			for (c--; c >= 0; c--) {
+				free(world->chunks[c]);
+				free(world->visited[c]);
+			}
+
+			free(world->chunks);
+			free(world->visited);
+			free(world);
+			return NULL;
+		}
 
 		for (int r = 0; r < 64; r++) {
 			world->chunks[c][r] = readlinep(file);
+			world->visited[c][r] = calloc(128, sizeof(char));
+
+			// if either didn't allocate properly, free as necessary and return NULL
+			if (world->chunks[c][r] == NULL || world->visited[c][r] == NULL) {
+				if (world->chunks[c][r] == NULL) free(world->chunks[c][r]);
+				if (world->visited[c][r] == NULL) free(world->visited[c][r]);
+
+				for (r--; r >= 0; r--) {
+					free(world->chunks[c][r]);
+					free(world->visited[c][r]);
+				}
+
+				for (; c >= 0; c--) {
+					free(world->chunks[c]);
+					free(world->visited[c]);
+				}
+
+				free(world->chunks);
+				free(world->visited);
+				free(world);
+				return NULL;
+			}
 		}
 
 		fclose(file);
@@ -72,44 +122,66 @@ world_print(world_t *world)
 {
 	WINDOW *worldWin = world->worldWin;
 	int *loc = player_getLoc(world->player);
+	// int chunk, row, col;
 	loc[0] = modulo(loc[0], 64);
 	loc[1] = modulo(loc[1], 128);
 	char ***chunks = world->chunks;
+	char ***visited = world->visited;
+	char *cChar, *vChar;
 
 	for (int r = 0; r < 27; r++) {
-		if (loc[0] + r - 13 < 0) {
-			if (loc[1] - 44 < 0) {
-				mvwprintw(worldWin, r, 0, "%.*s", 44 - loc[1], chunks[CHUNK_NW][loc[0] + r + 51] + loc[1] + 84);
-				wprintw(worldWin, "%.*s", loc[1] + 45, chunks[CHUNK_N][loc[0] + r + 51]);
-			} else if (loc[1] + 44 < 128) {
-				mvwprintw(worldWin, r, 0, "%.89s", chunks[CHUNK_N][loc[0] + r + 51] + loc[1] - 44);
+		for (int c = 0; c < 89; c++) {
+			if (loc[0] + r - 13 < 0) {
+				if (loc[1] + c - 44 < 0) {
+					cChar = &(chunks[CHUNK_NW][loc[0] + r + 51][loc[1] + c + 84]);
+					vChar = &(visited[CHUNK_NW][loc[0] + r + 51][loc[1] + c + 84]);
+				} else if (loc[1] + c - 44 < 128) {
+					cChar = &(chunks[CHUNK_N][loc[0] + r + 51][loc[1] + c - 44]);
+					vChar = &(visited[CHUNK_N][loc[0] + r + 51][loc[1] + c - 44]);
+				} else {
+					cChar = &(chunks[CHUNK_NE][loc[0] + r + 51][loc[1] + c - 172]);
+					vChar = &(visited[CHUNK_NE][loc[0] + r + 51][loc[1] + c - 172]);
+				}
+			} else if (loc[0] + r - 13 < 64) {
+				if (loc[1] + c - 44 < 0) {
+					cChar = &(chunks[CHUNK_W][loc[0] + r - 13][loc[1] + c + 84]);
+					vChar = &(visited[CHUNK_W][loc[0] + r - 13][loc[1] + c + 84]);
+				} else if (loc[1] + c - 44 < 128) {
+					cChar = &(chunks[CHUNK_C][loc[0] + r - 13][loc[1] + c - 44]);
+					vChar = &(visited[CHUNK_C][loc[0] + r - 13][loc[1] + c - 44]);
+				} else {
+					cChar = &(chunks[CHUNK_E][loc[0] + r - 13][loc[1] + c - 172]);
+					vChar = &(visited[CHUNK_E][loc[0] + r - 13][loc[1] + c - 172]);
+				}
 			} else {
-				mvwprintw(worldWin, r, 0, "%.*s", 172 - loc[1], chunks[CHUNK_N][loc[0] + r + 51] + loc[1] - 44);
-				wprintw(worldWin, "%.*s", loc[1] - 83, chunks[CHUNK_NE][loc[0] + r + 51]);
+				if (loc[1] + c - 44 < 0) {
+					cChar = &(chunks[CHUNK_SW][loc[0] + r - 77][loc[1] + c + 84]);
+					vChar = &(visited[CHUNK_SW][loc[0] + r - 77][loc[1] + c + 84]);
+				} else if (loc[1] + c - 44 < 128) {
+					cChar = &(chunks[CHUNK_S][loc[0] + r - 77][loc[1] + c - 44]);
+					vChar = &(visited[CHUNK_S][loc[0] + r - 77][loc[1] + c - 44]);
+				} else {
+					cChar = &(chunks[CHUNK_SE][loc[0] + r - 77][loc[1] + c - 172]);
+					vChar = &(visited[CHUNK_SE][loc[0] + r - 77][loc[1] + c - 172]);
+				}
 			}
-		} else if (loc[0] + r - 13 < 64) {
-			if (loc[1] - 44 < 0) {
-				mvwprintw(worldWin, r, 0, "%.*s", 44 - loc[1], chunks[CHUNK_W][loc[0] + r - 13] + loc[1] + 84);
-				wprintw(worldWin, "%.*s", loc[1] + 45, chunks[CHUNK_C][loc[0] + r - 13]);
-			} else if (loc[1] + 44 < 128) {
-				mvwprintw(worldWin, r, 0, "%.89s", chunks[CHUNK_C][loc[0] + r - 13] + loc[1] - 44);
-			} else {
-				mvwprintw(worldWin, r, 0, "%.*s", 172 - loc[1], chunks[CHUNK_C][loc[0] + r - 13] + loc[1] - 44);
-				wprintw(worldWin, "%.*s", loc[1] - 83, chunks[CHUNK_E][loc[0] + r - 13]);
+
+			if (c == 0) {
+				wmove(worldWin, r, c);
 			}
-		} else {
-			if (loc[1] - 44 < 0) {
-				mvwprintw(worldWin, r, 0, "%.*s", 44 - loc[1], chunks[CHUNK_SW][loc[0] + r - 77] + loc[1] + 84);
-				wprintw(worldWin, "%.*s", loc[1] + 45, chunks[CHUNK_S][loc[0] + r - 77]);
-			} else if (loc[1] + 44 < 128) {
-				mvwprintw(worldWin, r, 0, "%.89s", chunks[CHUNK_S][loc[0] + r - 77] + loc[1] - 44);
+
+			if (*vChar == 1) {
+				waddch(worldWin, *cChar);
+			} else if (abs(r - 13) + abs(c - 44) <= 5 * (player_getJUD(world->player) - 1) + 12 ) {
+				*vChar = 1;
+				waddch(worldWin, *cChar);
 			} else {
-				mvwprintw(worldWin, r, 0, "%.*s", 172 - loc[1], chunks[CHUNK_S][loc[0] + r - 77] + loc[1] - 44);
-				wprintw(worldWin, "%.*s", loc[1] - 83, chunks[CHUNK_SE][loc[0] + r - 77]);
+				waddch(worldWin, ACS_CKBOARD);
 			}
 		}
 	}
 
+	free(loc);
 	mvwaddch(worldWin, 13, 44, '@');
 	wrefresh(worldWin);
 }

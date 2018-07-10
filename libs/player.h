@@ -36,6 +36,73 @@ player_t *player_new();
  */
 int *player_getLoc(player_t *player);
 
+/* **************** player_getStats() ****************
+ * Returns the stats of the player
+ *
+ * player: player_t pointer to the player whose stats are requested
+ * return: int pointer stats, where stats are indexed according to the STAT
+ *		constants
+ *
+ * memory contract: int pointer must be freed
+ */
+int *player_getStats(player_t *player);
+
+/* **************** playeer_getMIG() ****************
+ * Returns the might of the player
+ *
+ * player: player_t pointer to the player whose might is requested
+ * return: int of player's might stat
+ */
+int player_getMIG(player_t *player);
+
+/* **************** playeer_getVIG() ****************
+ * Returns the vigor of the player
+ *
+ * player: player_t pointer to the player whose vigor is requested
+ * return: int of player's vigor stat
+ */
+int player_getVIG(player_t *player);
+
+/* **************** playeer_getLEG() ****************
+ * Returns the legerity of the player
+ *
+ * player: player_t pointer to the player whose legerity is requested
+ * return: int of player's legerity stat
+ */
+int player_getLEG(player_t *player);
+
+/* **************** playeer_getINT() ****************
+ * Returns the intellect of the player
+ *
+ * player: player_t pointer to the player whose intellect is requested
+ * return: int of player's intellect stat
+ */
+int player_getINT(player_t *player);
+
+/* **************** playeer_getJUD() ****************
+ * Returns the judgement of the player
+ *
+ * player: player_t pointer to the player whose judgement is requested
+ * return: int of player's judgement stat
+ */
+int player_getJUD(player_t *player);
+
+/* **************** playeer_getCHA() ****************
+ * Returns the charm of the player
+ *
+ * player: player_t pointer to the player whose charm is requested
+ * return: int of player's charm stat
+ */
+int player_getCHA(player_t *player);
+
+/* **************** playeer_getFAV() ****************
+ * Returns the favor of the player
+ *
+ * player: player_t pointer to the player whose favor is requested
+ * return: int of player's favor stat
+ */
+int player_getFAV(player_t *player);
+
 /* **************** player_move() ****************
  * Moves the player one unit in the specified direction
  *

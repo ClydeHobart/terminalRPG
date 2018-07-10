@@ -82,6 +82,49 @@ player_getLoc(player_t *player)
 	return loc;
 }
 
+/**************** player_getStats() ****************/
+int*
+player_getStats(player_t *player)
+{
+	int *stats = calloc(7, sizeof(int));
+
+	if (stats != NULL) {
+		for (int s = 0; s < 7; s++) {
+			stats[s] = player->stats[s];
+		}
+	}
+
+	return stats;
+}
+
+/**************** player_getMIG() ****************/
+int
+player_getMIG(player_t *player) {return player->stats[STAT_MIG];}
+
+/**************** player_getVIG() ****************/
+int
+player_getVIG(player_t *player) {return player->stats[STAT_VIG];}
+
+/**************** player_getLEG() ****************/
+int
+player_getLEG(player_t *player) {return player->stats[STAT_LEG];}
+
+/**************** player_getINT() ****************/
+int
+player_getINT(player_t *player) {return player->stats[STAT_INT];}
+
+/**************** player_getJUD() ****************/
+int
+player_getJUD(player_t *player) {return player->stats[STAT_JUD];}
+
+/**************** player_getCHA() ****************/
+int
+player_getCHA(player_t *player) {return player->stats[STAT_CHA];}
+
+/**************** player_getFAV() ****************/
+int
+player_getFAV(player_t *player) {return player->stats[STAT_FAV];}
+
 /**************** player_move() ****************/
 void
 player_move(player_t *player, int move)
