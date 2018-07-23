@@ -13,6 +13,7 @@
 #include "libs/animations.h"
 #include "libs/player.h"
 #include "libs/world.h"
+#include "libs/color.h"
 
 int main(const int argc, char *argv[])
 {
@@ -26,11 +27,14 @@ int main(const int argc, char *argv[])
 	int width;				// int for width of stdscr
 	int response;			// int for function responses
 	int key;					// int for key presses
+	short ***initials;
 
 	currErr = 1;
 	initscr();
 	noecho();
 	curs_set(0);
+	start_color();
+
 
 	if (getmaxyx(stdscr, height, width), height < 40 || width < 120) {
 		mvprintw(height / 2, (width / 2 - 25 < 0 ? 0 : width / 2 - 25),
@@ -66,8 +70,9 @@ int main(const int argc, char *argv[])
 	wborder(gameWin, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
 		'O', 'O', 'O', 'O');
 	wrefresh(gameWin);
+	initials = initColors();
 	worldWin = derwin(gameWin, 27, 89, 1, 30);
-	player = player_new();
+	player = player_new("Greg");
 	world = world_new(worldWin, player);
 	world_print(world);
 	key = wgetch(gameWin);
@@ -87,6 +92,9 @@ int main(const int argc, char *argv[])
 		key = wgetch(gameWin);
 	}
 
+	world_save(world);
+	world_delete(world);
+	resetColors(initials);
 	endwin();
 	return 0;
 }

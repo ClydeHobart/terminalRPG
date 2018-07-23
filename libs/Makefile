@@ -7,12 +7,13 @@ FILE = file
 ANIM = animations
 PLAY = player
 WRLD = world
+COL = color
 
-FLAGS = 
-CFLAGS = -Wall -pedantic -std=c11 $(FLAGS) -g
+FLAGS = -g
+CFLAGS = -Wall -pedantic -std=c11 $(FLAGS)
 CC = gcc
 MAKE = make
-OBJS = $(FILE).o $(ANIM).o $(PLAY).o $(WRLD).o
+OBJS = $(FILE).o $(ANIM).o $(PLAY).o $(WRLD).o $(COL).o
 LIBS = libs.a
 
 .PHONY: clean
@@ -30,6 +31,9 @@ $(PLAY).o: $(PLAY).h
 
 $(WRLD).o: $(WRLD).h $(FILE).h $(PLAY).h
 	$(CC) $(CFLAGS) -Ilibs -lncurses $(WRLD).c -c
+
+$(COL).o: $(COL).h
+	$(CC) $(CFLAGS) -lncurses $(COL).c -c
 
 clean:
 	rm -f *.o *.a *~  *.dSYM

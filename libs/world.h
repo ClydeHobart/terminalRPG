@@ -48,4 +48,20 @@ void world_print(world_t *world);
  */
 void world_handleMove(world_t *world, int move);
 
+/* **************** world_delete() ****************
+ * Deletes a world and its contents, freeing all the allocated memory
+ *
+ * world: world_t pointer of world to delete
+ *
+ * memory contract: world is now freed and should not be referenced
+ */
+void world_delete(world_t *world);
+
+/* **************** world_save() ****************
+ * Saves a world and its contents
+ *
+ * world: world_t pointer of world to save
+ */
+void world_save(world_t *world);
+
 #endif // __WORLD_H__

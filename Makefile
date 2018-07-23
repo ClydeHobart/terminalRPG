@@ -6,13 +6,14 @@
 NCT = ncursesTest
 MPT = mapTest
 YL = yoreland
+COLT = colorTest
 
-ALL = $(NCT) $(MPT) $(YL)
+ALL = $(NCT) $(MPT) $(YL) $(COLT)
 
 L = libs
 
-FLAGS =
-CFLAGS = -Wall -pedantic -std=c11 $(FLAGS) -g
+FLAGS = -g
+CFLAGS = -Wall -pedantic -std=c11 $(FLAGS)
 CC = gcc
 MAKE = make
 LIBS = $L/$L.a
@@ -31,6 +32,9 @@ $(MPT): $(MPT).c $(LIBS)
 	$(CC) $(CFLAGS) $^ -o $@ -lncurses
 
 $(YL): $(YL).c $(LIBS)
+	$(CC) $(CFLAGS) $^ -o $@ -lncurses
+
+$(COLT): $(COLT).c $(LIBS)
 	$(CC) $(CFLAGS) $^ -o $@ -lncurses
 
 clean:

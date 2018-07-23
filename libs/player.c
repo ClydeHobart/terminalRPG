@@ -35,6 +35,7 @@ typedef struct player {
 	int maxBurden;
 	int row;
 	int col;
+	char name[20];
 } player_t;
 
 /* **************** global functions ****************
@@ -43,13 +44,15 @@ typedef struct player {
 
 /**************** player_new() ****************/
 player_t *
-player_new()
+player_new(const char *name)
 {
 	player_t *player = calloc(1, sizeof(player_t));
 
 	if (player == NULL) {
-		return player;
+		return NULL;
 	}
+
+	strncpy(player->name, name, 20);
 
 	for (int s = 0; s < 7; s++) {
 		player->stats[s] = 1;
@@ -63,8 +66,8 @@ player_new()
 	player->maxStamina = 100;
 	player->burden = 100;
 	player->maxBurden = 100;
-	player->row = 0;
-	player->col = 0;
+	player->row = 32;
+	player->col = 64;
 	return player;
 }
 
@@ -124,6 +127,15 @@ player_getCHA(player_t *player) {return player->stats[STAT_CHA];}
 /**************** player_getFAV() ****************/
 int
 player_getFAV(player_t *player) {return player->stats[STAT_FAV];}
+
+/**************** player_getName() ****************/
+char *
+player_getName(player_t *player)
+{
+	char *name;	// string for player name
+	name = calloc(strlen(player->name) + 1, sizeof(char));
+	return strcpy(name, player->name);
+}
 
 /**************** player_move() ****************/
 void

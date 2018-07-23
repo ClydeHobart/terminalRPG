@@ -20,11 +20,12 @@ typedef struct player player_t;
  * Instantiates a new player with 1 for all stats, lvl 1, 0 exp, and 100 for all
  * other attributes
  *
+ * name: string of player name
  * return: player_t pointer to newly instantiated player
  * 
  * memory contract: player_t pointer must be freed
  */
-player_t *player_new();
+player_t *player_new(const char *name);
 
 /* **************** player_getLoc() ****************
  * Returns the location of the player
@@ -102,6 +103,17 @@ int player_getCHA(player_t *player);
  * return: int of player's favor stat
  */
 int player_getFAV(player_t *player);
+
+
+/* **************** player_getName() ****************
+ * Returns the name of the player
+ *
+ * player: player_t pointer to the player whose name is requested
+ * return: alloc'ed string of the players name
+ *
+ * memory contract: returned string must be freed
+ */
+char *player_getName(player_t *player);
 
 /* **************** player_move() ****************
  * Moves the player one unit in the specified direction
