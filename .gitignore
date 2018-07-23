@@ -9,8 +9,8 @@
 
 # directories
 
-largeFiles/*
-saves/*
+largeFiles
+saves
 
 # WIP files
 
