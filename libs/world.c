@@ -19,7 +19,7 @@
 
 /**************** global types ****************/
 typedef struct world {
-	WINDOW *worldWin;
+	WINDOW *win;
 	player_t *player;
 	char ***chunks;
 	char ***depths;
@@ -36,7 +36,7 @@ static int divide(int dividend, int divisor);
 
 /**************** world_new() ****************/
 world_t *
-world_new(WINDOW *worldWin, player_t *player)
+world_new(WINDOW *win, player_t *player)
 {
 	FILE *mapFile, *mapDepthFile;
 	world_t *world = calloc(1, sizeof(world_t));
@@ -45,7 +45,7 @@ world_new(WINDOW *worldWin, player_t *player)
 		return NULL;
 	}
 
-	world->worldWin = worldWin;
+	world->win = win;
 	world->player = player;
 	world->chunks = calloc(9, sizeof(char **));
 	world->depths = calloc(9, sizeof(char **));
@@ -132,94 +132,63 @@ world_new(WINDOW *worldWin, player_t *player)
 void
 world_print(world_t *world)
 {
-	WINDOW *worldWin = world->worldWin;
-	int *loc = player_getLoc(world->player);
-	// int chunk, row, col;
+	WINDOW *win;		// WINDOW pointer of the world
+	int *loc;				// int array of the player's location
+	int chunk;			// int of the chunk of the print cell
+	int chRow;			// int of the row relative to the chunk of the print cell
+	int chCol;			// int of the col relative to the chunk of the print cell
+	int depthDiff;	// int for the difference in depth of the print cell and the player cell
+	char *cChar;		// char pointer for the chunks value of the print cell
+	char *dChar;		// char pointer for the depths value of the print cell
+	char *vChar;		// char pointer for the visited value of the print cell
+
+	win = world->win;
+	loc = player_getLoc(world->player);
 	loc[0] = modulo(loc[0], 64);
 	loc[1] = modulo(loc[1], 128);
-	char ***chunks = world->chunks;
-	char ***depths = world->depths;
-	char ***visited = world->visited;
-	char *cChar, *dChar, *vChar;
 
-	for (int r = 0; r < 27; r++) {
-		for (int c = 0; c < 89; c++) {
-			if (loc[0] + r - 13 < 0) {
-				if (loc[1] + c - 44 < 0) {
-					cChar = &(chunks[YTU_CHUNK_NW][loc[0] + r + 51][loc[1] + c + 84]);
-					dChar = &(depths[YTU_CHUNK_NW][loc[0] + r + 51][loc[1] + c + 84]);
-					vChar = &(visited[YTU_CHUNK_NW][loc[0] + r + 51][loc[1] + c + 84]);
-				} else if (loc[1] + c - 44 < 128) {
-					cChar = &(chunks[YTU_CHUNK_N][loc[0] + r + 51][loc[1] + c - 44]);
-					dChar = &(depths[YTU_CHUNK_N][loc[0] + r + 51][loc[1] + c - 44]);
-					vChar = &(visited[YTU_CHUNK_N][loc[0] + r + 51][loc[1] + c - 44]);
-				} else {
-					cChar = &(chunks[YTU_CHUNK_NE][loc[0] + r + 51][loc[1] + c - 172]);
-					dChar = &(depths[YTU_CHUNK_NE][loc[0] + r + 51][loc[1] + c - 172]);
-					vChar = &(visited[YTU_CHUNK_NE][loc[0] + r + 51][loc[1] + c - 172]);
-				}
-			} else if (loc[0] + r - 13 < 64) {
-				if (loc[1] + c - 44 < 0) {
-					cChar = &(chunks[YTU_CHUNK_W][loc[0] + r - 13][loc[1] + c + 84]);
-					dChar = &(depths[YTU_CHUNK_W][loc[0] + r - 13][loc[1] + c + 84]);
-					vChar = &(visited[YTU_CHUNK_W][loc[0] + r - 13][loc[1] + c + 84]);
-				} else if (loc[1] + c - 44 < 128) {
-					cChar = &(chunks[YTU_CHUNK_C][loc[0] + r - 13][loc[1] + c - 44]);
-					dChar = &(depths[YTU_CHUNK_C][loc[0] + r - 13][loc[1] + c - 44]);
-					vChar = &(visited[YTU_CHUNK_C][loc[0] + r - 13][loc[1] + c - 44]);
-				} else {
-					cChar = &(chunks[YTU_CHUNK_E][loc[0] + r - 13][loc[1] + c - 172]);
-					dChar = &(depths[YTU_CHUNK_E][loc[0] + r - 13][loc[1] + c - 172]);
-					vChar = &(visited[YTU_CHUNK_E][loc[0] + r - 13][loc[1] + c - 172]);
-				}
-			} else {
-				if (loc[1] + c - 44 < 0) {
-					cChar = &(chunks[YTU_CHUNK_SW][loc[0] + r - 77][loc[1] + c + 84]);
-					dChar = &(depths[YTU_CHUNK_SW][loc[0] + r - 77][loc[1] + c + 84]);
-					vChar = &(visited[YTU_CHUNK_SW][loc[0] + r - 77][loc[1] + c + 84]);
-				} else if (loc[1] + c - 44 < 128) {
-					cChar = &(chunks[YTU_CHUNK_S][loc[0] + r - 77][loc[1] + c - 44]);
-					dChar = &(depths[YTU_CHUNK_S][loc[0] + r - 77][loc[1] + c - 44]);
-					vChar = &(visited[YTU_CHUNK_S][loc[0] + r - 77][loc[1] + c - 44]);
-				} else {
-					cChar = &(chunks[YTU_CHUNK_SE][loc[0] + r - 77][loc[1] + c - 172]);
-					dChar = &(depths[YTU_CHUNK_SE][loc[0] + r - 77][loc[1] + c - 172]);
-					vChar = &(visited[YTU_CHUNK_SE][loc[0] + r - 77][loc[1] + c - 172]);
-				}
-			}
+	for (int winRow = 0; winRow < 27; winRow++) {
+		for (int winCol = 0; winCol < 89; winCol++) {
+			chunk = (divide(loc[0] + winRow - 13, 64) + 1) * 3 + divide(loc[1] + winCol - 44, 128) + 1;
+			chRow = loc[0] + winRow - 13 + 64 * (1 - (chunk / 3));
+			chCol = loc[1] + winCol - 44 + 128 * (1 - (chunk % 3));
+			cChar = &(world->chunks[chunk][chRow][chCol]);
+			dChar = &(world->depths[chunk][chRow][chCol]);
+			vChar = &(world->visited[chunk][chRow][chCol]);
+			depthDiff = *dChar - world->depths[YTU_CHUNK_C][loc[0]][loc[1]];
 
-			if (c == 0) {
-				wmove(worldWin, r, c);
+			if (winCol == 0) {
+				wmove(win, winRow, winCol);
 			}
 
 			if (*vChar != '1' &&
-				abs(r - 13) + abs(c - 44) <= 5 * (player_getJUD(world->player) - 1) + 12 &&
-				abs(*dChar - depths[YTU_CHUNK_C][loc[0]][loc[1]]) < 5) {
+				abs(winRow - 13) + abs(winCol - 44) <= 5 * (player_getJUD(world->player) - 1) + 12 &&
+				abs(depthDiff) < 5) {
 				*vChar = '1';
 			}
 
-			if (*vChar == '1' && abs(*dChar - depths[YTU_CHUNK_C][loc[0]][loc[1]]) < 5) {
-				wattron(worldWin, COLOR_PAIR(adjustColor(YTU_COLOR_GRAY, *dChar - depths[YTU_CHUNK_C][loc[0]][loc[1]])));
-				waddch(worldWin, *cChar);
+			if (*vChar == '1' && abs(depthDiff) < 5) {
+				wattron(win, COLOR_PAIR(adjustColor(YTU_COLOR_GRAY, depthDiff)));
+				waddch(win, *cChar);
 			} else {
-				wattron(worldWin, COLOR_PAIR(YTU_COLOR_GRAY));
+				wattron(win, COLOR_PAIR(YTU_COLOR_GRAY));
 				
 				if (*vChar == '1') {
-					if (*dChar - depths[YTU_CHUNK_C][loc[0]][loc[1]] > 0)
-						wattron(worldWin, COLOR_PAIR(adjustColor(YTU_COLOR_GRAY, 4)));
+					if (depthDiff > 0)
+						wattron(win, COLOR_PAIR(adjustColor(YTU_COLOR_GRAY, 4)));
 					else
-						wattron(worldWin, COLOR_PAIR(adjustColor(YTU_COLOR_GRAY, -4)));
+						wattron(win, COLOR_PAIR(adjustColor(YTU_COLOR_GRAY, -4)));
 				}
 				
-				waddch(worldWin, ACS_CKBOARD);
+				waddch(win, ACS_CKBOARD);
 			}
 		}
 	}
 
 	free(loc);
-	wattron(worldWin, COLOR_PAIR(YTU_COLOR_GREEN));
-	mvwaddch(worldWin, 13, 44, '@');
-	wrefresh(worldWin);
+	wattron(win, COLOR_PAIR(YTU_COLOR_GREEN));
+	mvwaddch(win, 13, 44, '@');
+	wrefresh(win);
 }
 
 /**************** world_handleMove() ****************/
