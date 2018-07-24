@@ -61,6 +61,8 @@ void world_delete(world_t *world);
  * Saves a world and its contents
  *
  * world: world_t pointer of world to save
+ *
+ * assumptions: "saves" directory exists in current directory
  */
 void world_save(world_t *world);
 

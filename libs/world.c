@@ -27,8 +27,9 @@ typedef struct world {
 } world_t;
 
 /**************** local functions ****************/
-static int modulo(int dividend, int divisor);
-static int divide(int dividend, int divisor);
+static int modulo(const int dividend, const int divisor);
+static int divide(const int dividend, const int divisor);
+static void world_saveChunk(world_t *world, const int chunk);
 
 /* **************** global functions ****************
  * See world.h for function descriptions
@@ -251,37 +252,19 @@ world_delete(world_t *world)
 void
 world_save(world_t *world)
 {
-	FILE *vFile;
-	int *loc;
-	char *vFileName;
+	char *vDirName;
 	char *playerName;
 
-	loc = player_getLoc(world->player);
-	loc[0] = divide(loc[0], 64);
-	loc[1] = divide(loc[1], 128);
 	playerName = player_getName(world->player);
-	vFileName = calloc(strlen(playerName) + 21, sizeof(char));
-	sprintf(vFileName, "saves/%s", playerName);
-	mkdir(vFileName, 00777);
-
-	for (int chRow = 0; chRow < 3; chRow++) {
-		for (int chCol = 0; chCol < 3; chCol++) {
-			sprintf(vFileName, "saves/%s/%.3d_%.3d.txt", playerName, loc[0] + chRow + 127, loc[1] + chCol + 127);
-			vFile = fopen(vFileName, "w");
-
-			if (vFile != NULL) {
-				for (int r = 0; r < 64; r++) {
-					fprintf(vFile, "%s\n", world->visited[chRow * 3 + chCol][r]);
-				}
-			}
-
-			fclose(vFile);
-		}
-	}
-
-	free(vFileName);
+	vDirName = calloc(strlen(playerName) + 7, sizeof(char));
+	sprintf(vDirName, "saves/%s", playerName);
+	mkdir(vDirName, 00777);
+	free(vDirName);
 	free(playerName);
-	free(loc);
+
+	for (int c = 0; c < 9; c++) {
+		world_saveChunk(world, c);
+	}
 }
 
 /* **************** modulo() ****************
@@ -294,7 +277,7 @@ world_save(world_t *world)
  * return: floored-division remainder of dividend % divisor
  */
 static int
-modulo(int dividend, int divisor)
+modulo(const int dividend, const int divisor)
 {
 	int remainder = dividend % divisor;
 	return (remainder < 0 ? remainder + divisor : remainder);
@@ -308,7 +291,46 @@ modulo(int dividend, int divisor)
  * return: floored division quotient of dividend / divisor
  */
 static int
-divide(int dividend, int divisor)
+divide(const int dividend, const int divisor)
 {
 	return (dividend < 0 ? dividend / divisor - 1 : dividend / divisor);
+}
+
+/* **************** world_saveChunk() ****************
+ * Saves a specific chunk of a world
+ *
+ * world: world_t pointer of world to save the chunk of
+ * chunk: int of index of chunk to save
+ */
+static void
+world_saveChunk(world_t *world, const int chunk)
+{
+	FILE *vFile;
+	int *loc;
+	int chRow;
+	int chCol;
+	char *vFileName;
+	char *playerName;
+
+	loc = player_getLoc(world->player);
+	loc[0] = divide(loc[0], 64);
+	loc[1] = divide(loc[1], 128);
+	chRow = chunk / 3;
+	chCol = chunk % 3;
+	playerName = player_getName(world->player);
+	vFileName = calloc(strlen(playerName) + 19, sizeof(char));
+	sprintf(vFileName, "saves/%s/%.3d_%.3d.txt", playerName, loc[0] + chRow + 127, loc[1] + chCol + 127);
+	vFile = fopen(vFileName, "w");
+
+	if (vFile != NULL) {
+		for (int r = 0; r < 64; r++) {
+			fprintf(vFile, "%s\n", world->visited[chRow * 3 + chCol][r]);
+		}
+		
+		fclose(vFile);
+	}
+
+	free(vFileName);
+	free(playerName);
+	free(loc);
 }

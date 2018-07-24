@@ -123,4 +123,22 @@ char *player_getName(player_t *player);
  */
 void player_move(player_t *player, int move);
 
+/* **************** player_save() ****************
+ * Saves a player's information
+ *
+ * player: player_t pointer of player to save
+ *
+ * assumptions: "saves" directory exists in current directory
+ */
+void player_save(player_t *player);
+
+/* **************** player_load() ****************
+ * Loads a player's information
+ *
+ * player: player_t pointer of player to save
+ *
+ * assumptions: "saves" directory exists in current directory
+ */
+player_t *player_load(const char *name);
+
 #endif // __PLAYER_H__
