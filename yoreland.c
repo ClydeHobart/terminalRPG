@@ -51,7 +51,7 @@ int main(const int argc, char *argv[])
 	gameWin = newwin(40, 120, height / 2 - 20, width / 2 - 60);
 	refresh();
 
-	if (argc < 2 || strcmp("false", argv[1])) {
+	if (argc < 2 || argv[1][0] != '0') {
 		response = openingTitle_anim(gameWin);
 
 		if (response) {
@@ -72,8 +72,14 @@ int main(const int argc, char *argv[])
 	wrefresh(gameWin);
 	initials = initColors();
 	worldWin = derwin(gameWin, 27, 89, 1, 30);
-	player = player_load("Greg");
-	world = world_load(worldWin, player);
+
+	if (argc < 2 || argv[1][1] != '0') {
+		player = player_new("Greg");
+		world = world_new(worldWin, player);
+	} else {
+		player = player_load("Greg");
+		world = world_load(worldWin, player);
+	}
 	world_print(world);
 	key = wgetch(gameWin);
 

@@ -21,9 +21,9 @@
 typedef struct world {
 	WINDOW *win;
 	player_t *player;
-	char chunks[9][64][128];
-	char depths[9][64][128];
-	char visited[9][64][128];
+	char chunks[9][64][129];
+	char depths[9][64][129];
+	char visited[9][64][129];
 } world_t;
 
 /**************** local functions ****************/
@@ -325,7 +325,7 @@ world_saveChunk(world_t *world, const int chunk)
 
 		if (vFile) {
 			for (int row = 0; row < 64; row++) {
-				fprintf(vFile, "%.128s\n", world->visited[chunk][row]);
+				fprintf(vFile, "%s\n", world->visited[chunk][row]);
 			}
 			
 			fclose(vFile);
@@ -400,7 +400,7 @@ world_loadChunk(world_t *world, const int chunk)
 					break;
 				}
 
-				strncpy(world->chunks[chunk][row], line, 128);
+				strcpy(world->chunks[chunk][row], line);
 				free(line);
 				line = readlinep(dFile);
 
@@ -409,7 +409,7 @@ world_loadChunk(world_t *world, const int chunk)
 					break;
 				}
 
-				strncpy(world->depths[chunk][row], line, 128);
+				strcpy(world->depths[chunk][row], line);
 				free(line);
 				line = readlinep(vFile);
 
@@ -418,7 +418,7 @@ world_loadChunk(world_t *world, const int chunk)
 					break;
 				}
 
-				strncpy(world->visited[chunk][row], line, 128);
+				strcpy(world->visited[chunk][row], line);
 				free(line);
 			}
 		} else chunkLoaded = false;
