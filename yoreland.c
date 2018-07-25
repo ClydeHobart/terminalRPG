@@ -73,7 +73,7 @@ int main(const int argc, char *argv[])
 	initials = initColors();
 	worldWin = derwin(gameWin, 27, 89, 1, 30);
 	player = player_load("Greg");
-	world = world_new(worldWin, player);
+	world = world_load(worldWin, player);
 	world_print(world);
 	key = wgetch(gameWin);
 
@@ -93,7 +93,7 @@ int main(const int argc, char *argv[])
 	}
 
 	world_save(world);
-	world_delete(world);
+	free(world);
 	player_save(player);
 	resetColors(initials);
 	endwin();

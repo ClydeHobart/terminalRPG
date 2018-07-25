@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <sys/stat.h>
-// #include <time.h>
 #include <ncurses.h>
 #include "constants.h"
 #include "file.h"
@@ -21,19 +21,25 @@
 typedef struct world {
 	WINDOW *win;
 	player_t *player;
-	char ***chunks;
-	char ***depths;
-	char ***visited;
+	char chunks[9][64][128];
+	char depths[9][64][128];
+	char visited[9][64][128];
 } world_t;
 
 /**************** local functions ****************/
 static int modulo(const int dividend, const int divisor);
 static int divide(const int dividend, const int divisor);
-static void world_saveChunk(world_t *world, const int chunk);
+static bool world_saveChunk(world_t *world, const int chunk);
+static bool world_loadChunk(world_t *world, const int chunk);
 
 /* **************** global functions ****************
  * See world.h for function descriptions
  */
+world_t *world_new(WINDOW *win, player_t *player);
+void world_print(world_t *world);
+void world_handleMove(world_t *world, int move);
+bool world_save(world_t *world);
+world_t *world_load(WINDOW *win, player_t *player);
 
 /**************** world_new() ****************/
 world_t *
@@ -41,6 +47,7 @@ world_new(WINDOW *win, player_t *player)
 {
 	FILE *mapFile, *mapDepthFile;
 	world_t *world = calloc(1, sizeof(world_t));
+	char *line;
 
 	if (world == NULL) {
 		return NULL;
@@ -48,74 +55,18 @@ world_new(WINDOW *win, player_t *player)
 
 	world->win = win;
 	world->player = player;
-	world->chunks = calloc(9, sizeof(char **));
-	world->depths = calloc(9, sizeof(char **));
-	world->visited = calloc(9, sizeof(char **));
-
-	// if either didn't allocate properly, free as necessary and return NULL
-	if (world->chunks == NULL || world->depths == NULL || world->visited == NULL) {
-		if (world->chunks == NULL) free(world->chunks);
-		if (world->depths == NULL) free(world->depths);
-		if (world->visited == NULL) free(world->visited);
-		free(world);
-		return NULL;
-	}
 
 	for (int chunk = 0; chunk < 9; chunk++) {
 		mapFile = fopen("assets/maps/testMap1.txt", "r");
 		mapDepthFile = fopen("assets/maps/testMap1_depth.txt", "r");
-		world->chunks[chunk] = calloc(64, sizeof(char *));
-		world->depths[chunk] = calloc(64, sizeof(char *));
-		world->visited[chunk] = calloc(64, sizeof(char *));
-
-		// if either didn't allocate properly, free as necessary and return NULL
-		if (world->chunks[chunk] == NULL || world->depths[chunk] == NULL || world->visited[chunk] == NULL) {
-			if (world->chunks[chunk] == NULL) free(world->chunks[chunk]);
-			if (world->depths[chunk] == NULL) free(world->depths[chunk]);
-			if (world->visited[chunk] == NULL) free(world->visited[chunk]);
-
-			for (chunk--; chunk >= 0; chunk--) {
-				free(world->chunks[chunk]);
-				free(world->depths[chunk]);
-				free(world->visited[chunk]);
-			}
-
-			free(world->chunks);
-			free(world->depths);
-			free(world->visited);
-			free(world);
-			return NULL;
-		}
 
 		for (int row = 0; row < 64; row++) {
-			world->chunks[chunk][row] = readlinep(mapFile);
-			world->depths[chunk][row] = readlinep(mapDepthFile);
-			world->visited[chunk][row] = calloc(128, sizeof(char));
-
-			// if either didn't allocate properly, free as necessary and return NULL
-			if (world->chunks[chunk][row] == NULL || world->depths[chunk][row] == NULL || world->visited[chunk][row] == NULL) {
-				if (world->chunks[chunk][row] == NULL) free(world->chunks[chunk][row]);
-				if (world->depths[chunk][row] == NULL) free(world->depths[chunk][row]);
-				if (world->visited[chunk][row] == NULL) free(world->visited[chunk][row]);
-
-				for (row--; row >= 0; row--) {
-					free(world->chunks[chunk][row]);
-					free(world->depths[chunk][row]);
-					free(world->visited[chunk][row]);
-				}
-
-				for (; chunk >= 0; chunk--) {
-					free(world->chunks[chunk]);
-					free(world->depths[chunk]);
-					free(world->visited[chunk]);
-				}
-
-				free(world->chunks);
-				free(world->depths);
-				free(world->visited);
-				free(world);
-				return NULL;
-			}
+			line = readlinep(mapFile);
+			strncpy(world->chunks[chunk][row], line, 128);
+			free(line);
+			line = readlinep(mapDepthFile);
+			strncpy(world->depths[chunk][row], line, 128);
+			free(line);
 
 			for (int col = 0; col < 128; col++) {
 				world->visited[chunk][row][col] = '0';
@@ -196,32 +147,33 @@ world_print(world_t *world)
 void
 world_handleMove(world_t *world, int move)
 {
-	int *loc = player_getLoc(world->player);
+	int *loc;			// int array for player location
+	char *dChar;	// char pointer for depth of desired move location
+
+	loc = player_getLoc(world->player);
 	loc[0] = modulo(loc[0], 64);
 	loc[1] = modulo(loc[1], 128);
-	char ***depths = world->depths;
-	char *dChar;
 
 	switch (move) {
 		case KEY_UP:
-			dChar = (loc[0] == 0 ? &(depths[YTU_CHUNK_N][63][loc[1]]) :
-				&(depths[YTU_CHUNK_C][loc[0] - 1][loc[1]]));
+			dChar = (loc[0] == 0 ? &(world->depths[YTU_CHUNK_N][63][loc[1]]) :
+				&(world->depths[YTU_CHUNK_C][loc[0] - 1][loc[1]]));
 			break;
 		case KEY_DOWN:
-			dChar = (loc[0] == 63 ? &(depths[YTU_CHUNK_S][0][loc[1]]) :
-				&(depths[YTU_CHUNK_C][loc[0] + 1][loc[1]]));
+			dChar = (loc[0] == 63 ? &(world->depths[YTU_CHUNK_S][0][loc[1]]) :
+				&(world->depths[YTU_CHUNK_C][loc[0] + 1][loc[1]]));
 			break;
 		case KEY_LEFT:
-			dChar = (loc[1] == 0 ? &(depths[YTU_CHUNK_W][loc[0]][127]) :
-				&(depths[YTU_CHUNK_C][loc[0]][loc[1] - 1]));
+			dChar = (loc[1] == 0 ? &(world->depths[YTU_CHUNK_W][loc[0]][127]) :
+				&(world->depths[YTU_CHUNK_C][loc[0]][loc[1] - 1]));
 			break;
 		case KEY_RIGHT:
-			dChar = (loc[1] == 127 ? &(depths[YTU_CHUNK_E][loc[0]][0]) :
-				&(depths[YTU_CHUNK_C][loc[0]][loc[1] + 1]));
+			dChar = (loc[1] == 127 ? &(world->depths[YTU_CHUNK_E][loc[0]][0]) :
+				&(world->depths[YTU_CHUNK_C][loc[0]][loc[1] + 1]));
 			break;
 	}
 
-	if (abs(*dChar - depths[YTU_CHUNK_C][loc[0]][loc[1]]) < 2) {
+	if (abs(*dChar - world->depths[YTU_CHUNK_C][loc[0]][loc[1]]) < 2) {
 		player_move(world->player, move);
 	}
 
@@ -229,42 +181,70 @@ world_handleMove(world_t *world, int move)
 	free(loc);
 }
 
-/**************** world_delete() ****************/
-void
-world_delete(world_t *world)
-{
-	for (int c = 0; c < 9; c++) {
-		for (int r = 0; r < 64; r++) {
-			free(world->chunks[c][r]);
-			free(world->depths[c][r]);
-			free(world->visited[c][r]);
-		}
-
-		free(world->chunks[c]);
-		free(world->depths[c]);
-		free(world->visited[c]);
-	}
-
-	free(world);
-}
-
 /**************** world_save() ****************/
-void
+bool
 world_save(world_t *world)
 {
-	char *vDirName;
-	char *playerName;
+	char *vDirName;		// string for visited directory name
+	char *playerName;	// string for player name
+	bool worldSaved;	// bool for whether world saved properly
 
-	playerName = player_getName(world->player);
-	vDirName = calloc(strlen(playerName) + 7, sizeof(char));
-	sprintf(vDirName, "saves/%s", playerName);
-	mkdir(vDirName, 00777);
-	free(vDirName);
-	free(playerName);
+	worldSaved = true;
 
-	for (int c = 0; c < 9; c++) {
-		world_saveChunk(world, c);
-	}
+	do {
+		playerName = player_getName(world->player);
+
+		if (!playerName) {
+			worldSaved = false;
+			break;
+		}
+
+		vDirName = calloc(strlen(playerName) + 7, sizeof(char));
+
+		if (!vDirName) {
+			worldSaved = false;
+			break;
+		}
+
+		sprintf(vDirName, "saves/%s", playerName);
+		mkdir(vDirName, 00777);
+
+		for (int c = 0; c < 9; c++) {
+			if (!world_saveChunk(world, c)) {
+				worldSaved = false;
+				break;
+			}
+		}
+	} while (false);
+
+	if (vDirName) free(vDirName);
+	if (playerName) free(playerName);
+	return worldSaved;
+}
+
+/**************** world_load() ****************/
+world_t *
+world_load(WINDOW *win, player_t *player)
+{
+	world_t *world;	// world_t pointer for world to load
+
+	do {
+		world = calloc(1, sizeof(world_t));
+		
+		if (!world) break;
+		
+		world->win = win;
+		world->player = player;
+
+		for (int c = 0; c < 9; c++) {
+			if (!world_loadChunk(world, c)) {
+				free(world);
+				return NULL;
+			}
+		}
+	} while (false);
+
+	return world;
 }
 
 /* **************** modulo() ****************
@@ -301,36 +281,155 @@ divide(const int dividend, const int divisor)
  *
  * world: world_t pointer of world to save the chunk of
  * chunk: int of index of chunk to save
+ * return: bool of whether chunk saved properly
  */
-static void
+static bool
 world_saveChunk(world_t *world, const int chunk)
 {
-	FILE *vFile;
-	int *loc;
-	int chRow;
-	int chCol;
-	char *vFileName;
-	char *playerName;
+	FILE *vFile;			// FILE pointer for world->visited
+	int *loc;					// int array for player location
+	char *vFileName;	// string for visted file name
+	char *playerName;	// string for player name
+	bool chunkSaved;	// bool for whether chunk saved properly
 
-	loc = player_getLoc(world->player);
-	loc[0] = divide(loc[0], 64);
-	loc[1] = divide(loc[1], 128);
-	chRow = chunk / 3;
-	chCol = chunk % 3;
-	playerName = player_getName(world->player);
-	vFileName = calloc(strlen(playerName) + 19, sizeof(char));
-	sprintf(vFileName, "saves/%s/%.3d_%.3d.txt", playerName, loc[0] + chRow + 127, loc[1] + chCol + 127);
-	vFile = fopen(vFileName, "w");
+	chunkSaved = true;
 
-	if (vFile != NULL) {
-		for (int r = 0; r < 64; r++) {
-			fprintf(vFile, "%s\n", world->visited[chRow * 3 + chCol][r]);
+	do {
+		loc = player_getLoc(world->player);
+
+		if (!loc) {
+			chunkSaved = false;
+			break;
 		}
-		
-		fclose(vFile);
-	}
 
-	free(vFileName);
-	free(playerName);
-	free(loc);
+		loc[0] = divide(loc[0], 64);
+		loc[1] = divide(loc[1], 128);
+		playerName = player_getName(world->player);
+
+		if (!playerName) {
+			chunkSaved = false;
+			break;
+		}
+
+		vFileName = calloc(strlen(playerName) + 19, sizeof(char));
+
+		if (!vFileName) {
+			chunkSaved = false;
+			break;
+		}
+
+		sprintf(vFileName, "saves/%s/%.3d_%.3d.txt", playerName,
+			loc[0] + (chunk / 3) + 127,
+			loc[1] + (chunk % 3) + 127);
+		vFile = fopen(vFileName, "w");
+
+		if (vFile) {
+			for (int row = 0; row < 64; row++) {
+				fprintf(vFile, "%.128s\n", world->visited[chunk][row]);
+			}
+			
+			fclose(vFile);
+		} else chunkSaved = false;
+	} while (false);
+
+	if (vFileName) free(vFileName);
+	if (playerName) free(playerName);
+	if (loc) free(loc);
+	return chunkSaved;
+}
+
+/* **************** world_loadChunk() ****************
+ * Loads a specific chunk of a world
+ *
+ * world: world_t pointer of world to load the chunk of
+ * chunk: int of index of chunk to load
+ * return: bool for if chunk loaded properly
+ */
+static bool
+world_loadChunk(world_t *world, const int chunk)
+{
+	FILE *cFile;			// FILE pointer for world->chunks
+	FILE *dFile;			// FILE pointer for world->depths
+	FILE *vFile;			// FILE pointer for world->visited
+	int *loc;					// int array for player location
+	char *vFileName;	// string for visited file name
+	char *playerName;	// string for player name
+	char *line;				// string for line read from file
+	bool chunkLoaded;	// bool for whether the chunk loaded properly
+
+	chunkLoaded = true;
+
+	do {
+		loc = player_getLoc(world->player);
+
+		if (!loc) {
+			chunkLoaded = false;
+			break;
+		}
+
+		loc[0] = divide(loc[0], 64);
+		loc[1] = divide(loc[1], 128);
+		playerName = player_getName(world->player);
+
+		if (!playerName) {
+			chunkLoaded = false;
+			break;
+		}
+
+		vFileName = calloc(strlen(playerName) + 19, sizeof(char));
+
+		if (!vFileName) {
+			chunkLoaded = false;
+			break;
+		}
+
+		sprintf(vFileName, "saves/%s/%.3d_%.3d.txt", playerName,
+			loc[0] + (chunk / 3) + 127,
+			loc[1] + (chunk % 3) + 127);
+		vFile = fopen(vFileName, "r");
+
+		cFile = fopen("assets/maps/testMap1.txt", "r");
+		dFile = fopen("assets/maps/testMap1_depth.txt", "r");
+
+		if (cFile && dFile && vFile) {
+			for (int row = 0; row < 64; row++) {
+				line = readlinep(cFile);
+
+				if (!line) {
+					chunkLoaded = false;
+					break;
+				}
+
+				strncpy(world->chunks[chunk][row], line, 128);
+				free(line);
+				line = readlinep(dFile);
+
+				if (!line) {
+					chunkLoaded = false;
+					break;
+				}
+
+				strncpy(world->depths[chunk][row], line, 128);
+				free(line);
+				line = readlinep(vFile);
+
+				if (!line) {
+					chunkLoaded = false;
+					break;
+				}
+
+				strncpy(world->visited[chunk][row], line, 128);
+				free(line);
+			}
+		} else chunkLoaded = false;
+			
+		if (cFile) fclose(cFile);
+		if (dFile) fclose(dFile);
+		if (vFile) fclose(vFile);
+	} while (false);
+
+	if (vFileName) free(vFileName);
+	if (playerName) free(playerName);
+	if (loc) free(loc);
+	return chunkLoaded;
 }

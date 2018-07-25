@@ -48,22 +48,23 @@ void world_print(world_t *world);
  */
 void world_handleMove(world_t *world, int move);
 
-/* **************** world_delete() ****************
- * Deletes a world and its contents, freeing all the allocated memory
- *
- * world: world_t pointer of world to delete
- *
- * memory contract: world is now freed and should not be referenced
- */
-void world_delete(world_t *world);
-
 /* **************** world_save() ****************
  * Saves a world and its contents
  *
  * world: world_t pointer of world to save
+ * return: bool of whether world saved properly
  *
  * assumptions: "saves" directory exists in current directory
  */
-void world_save(world_t *world);
+bool world_save(world_t *world);
+
+/* **************** world_load() ****************
+ * Loads a world and its contents
+ *
+ * win: WINDOW pointer of window to print to
+ * player: player_t pointer of player in world
+ * return: world_t pointer of loaded world, NULL if error encountered
+ */
+world_t *world_load(WINDOW *win, player_t *player);
 
 #endif // __WORLD_H__

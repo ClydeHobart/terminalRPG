@@ -133,7 +133,9 @@ char *
 player_getName(player_t *player)
 {
 	char *name;	// string for player name
+
 	name = calloc(strlen(player->name) + 1, sizeof(char));
+	if (!name) return NULL;
 	return strcpy(name, player->name);
 }
 
@@ -170,12 +172,12 @@ player_save(player_t *player)
 
 	pFileName = calloc(strlen(player->name) + 18, sizeof(char));
 
-	if (pFileName == NULL) return;
+	if (!pFileName) return;
 
 	sprintf(pFileName, "saves/%s/player.txt", player->name);
 	pFile = fopen(pFileName, "w");
 
-	if (pFile != NULL) {
+	if (pFile) {
 		fprintf(pFile, "%s\n", player->name);
 		fprintf(pFile, "Stats:      ");
 
@@ -205,51 +207,108 @@ player_save(player_t *player)
 player_t *
 player_load(const char *name)
 {
-	FILE *pFile;
-	player_t *player;
-	char *pFileName;
-	char *line;
+	FILE *pFile;			// FILE pointer for player file
+	player_t *player;	// player_t pointer for player to load
+	char *pFileName;	// string for player file name
+	char *line;				// string for line read from file
 
 	do {
 		pFileName = calloc(strlen(name) + 18, sizeof(char));
+		player = calloc(1, sizeof(player_t));
+		if (!pFileName || !player) break;
 		sprintf(pFileName, "saves/%s/player.txt", name);
 		pFile = fopen(pFileName, "r");
-		player = calloc(1, sizeof(player_t));
-
-		if (!pFileName || !pFile || !player) break;
-
+		if (!pFile) break;
 		strcpy(player->name, name);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			break;
+		}
+
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			break;
+		}
+
 		sscanf(line, "Stats:      %d, %d, %d, %d, %d, %d, %d", &(player->stats[0]),
 			&(player->stats[1]), &(player->stats[2]), &(player->stats[3]),
 			&(player->stats[4]), &(player->stats[5]), &(player->stats[6]));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			break;
+		}
+
 		sscanf(line, "Stat mods:  %d, %d, %d, %d, %d, %d, %d", &(player->statMods[0]),
 			&(player->statMods[1]), &(player->statMods[2]), &(player->statMods[3]),
 			&(player->statMods[4]), &(player->statMods[5]), &(player->statMods[6]));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			break;
+		}
+
 		sscanf(line, "Level:      %d", &(player->lvl));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			fclose(pFile);
+			break;
+		}
+
 		sscanf(line, "Experience: %d", &(player->exp));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			fclose(pFile);
+			break;
+		}
+
 		sscanf(line, "Vitality:   %d / %d", &(player->vitality), &(player->maxVitality));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			fclose(pFile);
+			break;
+		}
+
 		sscanf(line, "Stamina:    %d / %d", &(player->stamina), &(player->maxStamina));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			fclose(pFile);
+			break;
+		}
+
 		sscanf(line, "Burden:     %d / %d", &(player->burden), &(player->maxBurden));
 		free(line);
 		line = readlinep(pFile);
+
+		if (!line) {
+			player = NULL;
+			fclose(pFile);
+			break;
+		}
+
 		sscanf(line, "Location:   (%d, %d)", &(player->row), &(player->col));
-		free(line);
-	} while (false);
+		free(line);	} while (false);
 
 	if (pFileName) free(pFileName);
 	if (pFile) fclose(pFile);
